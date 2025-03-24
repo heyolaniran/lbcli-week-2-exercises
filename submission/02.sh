@@ -1,3 +1,3 @@
 # Create a new Bitcoin address, for receiving change
-bitcoin-cli -regtest createwallet btrustwallet
-bitcoin-cli -regtest getnewaddress "" "bech32"
+WALLET=$(bitcoin-cli -regtest loadwallet btrustwallet)
+bitcoin-cli -regtest  getrawchangeaddress "bech32"
