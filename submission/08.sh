@@ -11,7 +11,6 @@ RAW_DECODED=$(bitcoin-cli -regtest decoderawtransaction $RAW_TX)
 
 TXID=$(echo $RAW_DECODED | jq -r '.txid')
 
-echo $TXID
 
 
 VOUT_1=$(echo $RAW_DECODED | jq -r '.vout[0].n')
