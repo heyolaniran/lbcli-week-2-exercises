@@ -6,15 +6,21 @@ RAW_TX="01000000000101c8b0928edebbec5e698d5f86d0474595d9f6a5b2e4e3772cd9d1005f23
 
 # Get correct UTXO from the transaction above
 
-UTXO=$(bitcoin-cli -regtest decoderawtransaction $RAW_TX | jq -r '.vout | map(select(.value > 0.2)) | .[0]')
-TXID=$(echo $UTXO | jq -r '.txid')
-VOUT=$(echo $UTXO | jq -r '.n')
+RAW_DECODED=$(bitcoin-cli -regtest decoderawtransaction $RAW_TX)
+
+
+TXID=$(echo $RAW_DECODED | jq -r '.txid')
+
+echo $TXID
+
+
+VOUT_1=$(echo $RAW_DECODED | jq -r '.vout[0].n')
+VOUT_2=$(echo $RAW_DECODED | jq -r '.vout[1].n')
 
 RECIPIENT="2MvLcssW49n9atmksjwg2ZCMsEMsoj3pzUP"
-CHANGE_ADDRESS=$(bitcoin-cli -regtest getrawchangeaddress)
-SEQUENCE=4294967293
+SEQUENCE=1
 
 
-RAW_CREATED=$(bitcoin-cli -regtest createrawtransaction "[{\"txid\":\"$TXID\",\"vout\":$VOUT , \"sequence\": \"$SEQUENCE\"}]" "{\"$RECIPIENT\":0.2,\"$CHANGE_ADDRESS\":0.0001}")
+RAW_CREATED=$(bitcoin-cli -regtest createrawtransaction "[{\"txid\":\"$TXID\",\"vout\":$VOUT_1 , \"sequence\": $SEQUENCE}, {\"txid\":\"$TXID\",\"vout\":$VOUT_2 , \"sequence\": $SEQUENCE}]" "{\"$RECIPIENT\":0.20000000}")
 SIGNED_TX=$(bitcoin-cli -regtest signrawtransactionwithwallet $RAW_CREATED | jq -r '.hex')
-echo bitcoin-cli sendrawtransaction $SIGNED_TX
+echo $SIGNED_TX
