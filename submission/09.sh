@@ -353,7 +353,8 @@ echo "- Sends funds to: bcrt1qxhy8dnae50nwkg6xfmjtedgs6augk5edj2tm3e"
 echo ""
 
 # Decode the secondary transaction (SECONDARY_TX) to get its TXID
-SECONDARY_TXID=$(echo $DECODED_TX | jq -r '.txid')
+DECODED_SECONDARY=$(bitcoin-cli -regtest decoderawtransaction $SECONDARY_TX)
+SECONDARY_TXID=$(echo $DECODED_SECONDARY | jq -r '.txid')
 check_cmd "Secondary TXID extraction" "SECONDARY_TXID" "$SECONDARY_TXID"
 echo "Secondary transaction ID: $SECONDARY_TXID"
 
@@ -367,7 +368,7 @@ TIMELOCK_ADDRESS="bcrt1qxhy8dnae50nwkg6xfmjtedgs6augk5edj2tm3e"
 
 # STUDENT TASK: Calculate the amount to send (use the output value from SECONDARY_TX, minus a fee)
 # Hint: Extract the output value from the secondary TX first
-SECONDARY_OUTPUT_VALUE=$(echo $DECODED_TX | jq -r '.vout[0].value * 100000000')
+SECONDARY_OUTPUT_VALUE=$(echo $DECODED_SECONDARY | jq -r '.vout[0].value * 100000000')
 check_cmd "Secondary output value extraction" "SECONDARY_OUTPUT_VALUE" "$SECONDARY_OUTPUT_VALUE"
 
 TIMELOCK_FEE=1000 # Use a simple fee of 1000 satoshis for this exercise
@@ -408,6 +409,6 @@ echo "These are advanced Bitcoin transaction concepts that form the foundation"
 echo "of Bitcoin's transaction capabilities and fee market."
 echo ""
 echo "Ready for real-world Bitcoin development!"
-
+echo ${#TIMELOCK_TX}
 # Output the final transaction hex - useful for verification
 echo $TIMELOCK_TX 
